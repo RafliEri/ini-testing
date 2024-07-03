@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { LoginUser, reset } from "../features/authSlice";
 
 const Login = () => {
@@ -13,11 +15,16 @@ const Login = () => {
   );
 
   useEffect(() => {
-    if (user || isSuccess) {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
       navigate("/dashboard");
     }
+
     dispatch(reset());
-  }, [user, isSuccess, dispatch, navigate]);
+  }, [user, isError, isSuccess, message, dispatch, navigate]);
 
   const Auth = (e) => {
     e.preventDefault();
@@ -31,7 +38,7 @@ const Login = () => {
           <div className="columns is-centered">
             <div className="column is-4">
               <form onSubmit={Auth} className="box">
-                {isError && <p className="has-text-centered">{message}</p>}
+                <ToastContainer />
                 <h1 className="title is-2">Sign In</h1>
                 <div className="field">
                   <label className="label">Email</label>

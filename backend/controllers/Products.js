@@ -1,12 +1,26 @@
 import Product from "../models/ProductModel.js";
 import User from "../models/UserModel.js";
-import {Op} from "sequelize";
+import { Op } from "sequelize";
+import fs from 'fs';
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const deleteOldImage = (imagePath) => {
+    if (imagePath) {
+        fs.unlink(path.join(__dirname, '..', imagePath), (err) => {
+            if (err) console.error(err);
+        });
+    }
+};
 
 export const getProducts = async (req, res) => {
     try {
         const condition = req.role === "admin" ? {} : { userId: req.userId };
         const response = await Product.findAll({
-            attributes: ['uuid', 'name', 'price', 'image'],
+            attributes: ['uuid', 'name', 'price', 'stock', 'image'],
             where: condition,
             include: [{
                 model: User,
@@ -31,7 +45,7 @@ export const getProductById = async (req, res) => {
             { [Op.and]: [{ id: product.id }, { userId: req.userId }] };
 
         const response = await Product.findOne({
-            attributes: ['uuid', 'name', 'price', 'image'],
+            attributes: ['uuid', 'name', 'price', 'stock', 'image'],
             where: condition,
             include: [{
                 model: User,
@@ -45,13 +59,13 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-    const { name, price } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null; // Anggap file disimpan di folder 'uploads'
-    
+    const { name, price, stock } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
     try {
         await Product.create({
             name,
             price,
+            stock,
             image,
             userId: req.userId
         });
@@ -68,9 +82,9 @@ export const updateProduct = async (req, res) => {
         });
         if (!product) return res.status(404).json({ msg: "Data tidak ditemukan" });
 
-        const { name, price } = req.body;
+        const { name, price, stock } = req.body;
         const image = req.file ? `/uploads/${req.file.filename}` : product.image;
-        
+
         const condition = req.role === "admin" ?
             { id: product.id } :
             { [Op.and]: [{ id: product.id }, { userId: req.userId }] };
@@ -79,9 +93,9 @@ export const updateProduct = async (req, res) => {
             return res.status(403).json({ msg: "Akses terlarang" });
         }
 
-        await Product.update({ name, price, image }, { where: condition });
+        if (req.file) deleteOldImage(product.image);
 
-        if (req.file) deleteOldImage(product.image); // Hapus gambar lama jika ada gambar baru
+        await Product.update({ name, price, stock, image }, { where: condition });
 
         res.status(200).json({ msg: "Product updated successfully" });
     } catch (error) {
@@ -104,12 +118,12 @@ export const deleteProduct = async (req, res) => {
             return res.status(403).json({ msg: "Akses terlarang" });
         }
 
-        await Product.destroy({ where: condition });
+        deleteOldImage(product.image);
 
-        deleteOldImage(product.image); // Hapus gambar lama jika produk dihapus
+        await Product.destroy({ where: condition });
 
         res.status(200).json({ msg: "Product deleted successfully" });
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
-}
+};

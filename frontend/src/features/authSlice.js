@@ -15,7 +15,11 @@ export const LoginUser = createAsyncThunk("user/LoginUser", async(user, thunkAPI
             email: user.email,
             password: user.password
         });
-        return response.data;
+        const userData = response.data;
+        if (userData.role === "Buyer") {
+            return thunkAPI.rejectWithValue("Anda tidak dapat login dihalaman ini");
+        }
+        return userData;
     } catch (error) {
         if(error.response){
             const message = error.response.data.msg;
@@ -61,7 +65,6 @@ export const authSlice = createSlice({
             state.message = action.payload;
         })
 
-        // Get User Login
         builder.addCase(getMe.pending, (state) =>{
             state.isLoading = true;
         });

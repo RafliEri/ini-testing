@@ -5,8 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 const FormEditProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
   const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null); // Preview untuk gambar yang diupload
+  const [preview, setPreview] = useState(null); 
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
@@ -19,8 +20,9 @@ const FormEditProduct = () => {
         );
         setName(response.data.name);
         setPrice(response.data.price);
+        setStock(response.data.stock);
         setImage(response.data.image);
-        setPreview(`http://localhost:5000${response.data.image}`); // Set preview untuk gambar yang ada
+        setPreview(`http://localhost:5000${response.data.image}`); 
       } catch (error) {
         if (error.response) {
           setMsg(error.response.data.msg);
@@ -35,6 +37,7 @@ const FormEditProduct = () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("price", price);
+    formData.append("stock", stock);
     if (image) {
       formData.append("image", image);
     }
@@ -57,6 +60,9 @@ const FormEditProduct = () => {
     const file = e.target.files[0];
     setImage(file);
     setPreview(URL.createObjectURL(file));
+  };
+  const handleCancel = () => {
+    navigate("/products");
   };
 
   return (
@@ -93,6 +99,18 @@ const FormEditProduct = () => {
                 </div>
               </div>
               <div className="field">
+                <label className="label">Stock</label>
+                <div className="control">
+                  <input
+                    type="text"
+                    className="input"
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
+                    placeholder="Stock"
+                  />
+                </div>
+              </div>
+              <div className="field">
                 <label className="label">Image</label>
                 <div className="control">
                   <input
@@ -109,10 +127,15 @@ const FormEditProduct = () => {
                   </figure>
                 </div>
               )}
-              <div className="field">
+              <div className="field is-grouped">
                 <div className="control">
                   <button type="submit" className="button is-success">
                     Update
+                  </button>
+                </div>
+                <div className="control">
+                  <button type="button" className="button is-danger" onClick={handleCancel}>
+                    Cancel
                   </button>
                 </div>
               </div>

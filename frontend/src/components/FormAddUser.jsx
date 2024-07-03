@@ -28,6 +28,12 @@ const FormAddUser = () => {
       }
     }
   };
+
+  const handleCancel = () => {
+    navigate("/users");
+  };
+
+  
   return (
     <div>
       <h1 className="title">Users</h1>
@@ -94,15 +100,22 @@ const FormAddUser = () => {
                       onChange={(e) => setRole(e.target.value)}
                     >
                       <option value="admin">Admin</option>
-                      <option value="user">User</option>
+                      <option value="marketing">Marketing</option>
+                      <option value="produksi">Produksi</option>
+                      <option value="Buyer">Buyer</option>
                     </select>
                   </div>
                 </div>
               </div>
-              <div className="field">
+              <div className="field is-grouped">
                 <div className="control">
                   <button type="submit" className="button is-success">
                     Save
+                  </button>
+                </div>
+                <div className="control">
+                  <button type="button" className="button is-danger" onClick={handleCancel}>
+                    Cancel
                   </button>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { IoPerson, IoPricetag, IoHome, IoLogOut } from "react-icons/io5";
+import { IoPerson, IoPricetag, IoHome, IoLogOut, IoClipboard  } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut, reset } from "../features/authSlice";
 
@@ -28,6 +28,11 @@ const Sidebar = () => {
           <li>
             <NavLink to={"/products"}>
               <IoPricetag /> Products
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={"/products"}>
+              <IoClipboard /> Transaction
             </NavLink>
           </li>
         </ul>

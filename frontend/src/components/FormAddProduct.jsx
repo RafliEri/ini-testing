@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const FormAddProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
   const [image, setImage] = useState(null);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const FormAddProduct = () => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
+    formData.append('stock', stock);
     formData.append('image', image);
 
     try {
@@ -28,6 +30,10 @@ const FormAddProduct = () => {
         setMsg(error.response.data.msg);
       }
     }
+  };
+
+  const handleCancel = () => {
+    navigate("/products");
   };
 
   return (
@@ -64,6 +70,18 @@ const FormAddProduct = () => {
                 </div>
               </div>
               <div className="field">
+                <label className="label">Stock</label>
+                <div className="control">
+                  <input
+                    type="text"
+                    className="input"
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
+                    placeholder="Stock"
+                  />
+                </div>
+              </div>
+              <div className="field">
                 <label className="label">Image</label>
                 <div className="control">
                   <input
@@ -74,10 +92,15 @@ const FormAddProduct = () => {
                   />
                 </div>
               </div>
-              <div className="field">
+              <div className="field is-grouped">
                 <div className="control">
                   <button type="submit" className="button is-success">
                     Save
+                  </button>
+                </div>
+                <div className="control">
+                  <button type="button" className="button is-danger" onClick={handleCancel}>
+                    Cancel
                   </button>
                 </div>
               </div>

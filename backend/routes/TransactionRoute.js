@@ -1,0 +1,11 @@
+import express from "express";
+import { getTransactions, createTransaction, deleteTransaction } from "../controllers/Transaction.js";
+import { verifyUser } from "../middleware/AuthUser.js";
+
+const router = express.Router();
+
+router.get('/transactions', verifyUser, getTransactions);
+router.post('/transactions', verifyUser, createTransaction);
+router.delete('/transactions/:id', verifyUser, deleteTransaction);
+
+export default router;

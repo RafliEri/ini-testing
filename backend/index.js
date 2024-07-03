@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
 import SequelizeStore from "connect-session-sequelize";
+import transactionRoutes from './routes/TransactionRoute.js';
 import UserRoute from "./routes/UserRoute.js";
 import ProductRoute from "./routes/ProductRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
@@ -22,6 +23,7 @@ const sessionStore = SequelizeStore(session.Store);
 // (async()=>{
 //     await db.sync();
 // })()
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -44,9 +46,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(UserRoute);
 app.use(ProductRoute);
 app.use(AuthRoute);
-
+app.use(transactionRoutes);
 // store.sync();
 
 app.listen(process.env.APP_PORT, ()=> {
-    console.log('Server up and running...');
+    console.log('Jalan tu bang Servernya...');
 });
